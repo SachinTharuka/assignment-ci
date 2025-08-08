@@ -1,0 +1,15 @@
+curl --location 'http://127.0.0.1:5000/predict' \
+--header 'Content-Type: application/json' \
+--data '{
+    "latitude": 51.5194064,
+    "longitude": -0.0532609,
+    "bathrooms": 1,
+    "bedrooms": 3,
+    "floorAreaSqM": 88,
+    "livingRooms": 1,
+    "tenure": "Freehold",
+    "propertyType": "Semi-Detached House",
+    "currentEnergyRating": "C",
+    "sale_month": 1,
+    "sale_year": 1995
+}'
