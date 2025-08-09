@@ -1,0 +1,152 @@
+{% extends "base.html" %} {% block content %}
+<h2>House Price Prediction</h2>
+<form id="predict-form">
+  <div class="mb-2">
+    <label>Latitude</label>
+    <input
+      type="number"
+      step="any"
+      name="latitude"
+      class="form-control"
+      required
+    />
+  </div>
+  <div class="mb-2">
+    <label>Longitude</label>
+    <input
+      type="number"
+      step="any"
+      name="longitude"
+      class="form-control"
+      required
+    />
+  </div>
+  <div class="mb-2">
+    <label>Bathrooms</label>
+    <input type="number" name="bathrooms" class="form-control" required />
+  </div>
+  <div class="mb-2">
+    <label>Bedrooms</label>
+    <input type="number" name="bedrooms" class="form-control" required />
+  </div>
+  <div class="mb-2">
+    <label>Floor Area (Sq M)</label>
+    <input type="number" name="floorAreaSqM" class="form-control" required />
+  </div>
+  <div class="mb-2">
+    <label>Living Rooms</label>
+    <input type="number" name="livingRooms" class="form-control" required />
+  </div>
+  <div class="mb-2">
+    <label>Tenure</label>
+    <select name="tenure" class="form-control" required>
+      <option value="Freehold">Freehold</option>
+      <option value="Leasehold">Leasehold</option>
+    </select>
+  </div>
+  <div class="mb-2">
+    <label>Property Type</label>
+    <select name="propertyType" class="form-control" required>
+      <option value="Detached House">Detached House</option>
+      <option value="Semi-Detached House">Semi-Detached House</option>
+      <option value="Terraced House">Terraced House</option>
+      <option value="Flat">Flat</option>
+      <option value="Bungalow">Bungalow</option>
+    </select>
+  </div>
+  <div class="mb-2">
+    <label>Current Energy Rating</label>
+    <select name="currentEnergyRating" class="form-control" required>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+      <option value="D">D</option>
+      <option value="E">E</option>
+      <option value="F">F</option>
+      <option value="G">G</option>
+    </select>
+  </div>
+  <div class="mb-2">
+    <label>Sale Month</label>
+    <input
+      type="number"
+      name="sale_month"
+      min="1"
+      max="12"
+      class="form-control"
+      required
+    />
+  </div>
+  <div class="mb-2">
+    <label>Sale Year</label>
+    <input
+      type="number"
+      name="sale_year"
+      min="1900"
+      max="2100"
+      class="form-control"
+      required
+    />
+  </div>
+
+  <button type="submit" class="btn btn-warning mt-2">Predict</button>
+</form>
+
+<hr />
+
+<div id="prediction-result" style="display: none">
+  <h4>Predicted Price: <span id="predicted-price"></span></h4>
+</div>
+
+<script>
+  document
+    .getElementById('predict-form')
+    .addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((value, key) => {
+        // convert numbers if needed
+        if (['latitude', 'longitude'].includes(key)) {
+          data[key] = parseFloat(value);
+        } else if (
+          [
+            'bathrooms',
+            'bedrooms',
+            'floorAreaSqM',
+            'livingRooms',
+            'sale_month',
+            'sale_year',
+          ].includes(key)
+        ) {
+          data[key] = parseInt(value, 10);
+        } else {
+          data[key] = value;
+        }
+      });
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          document.getElementById('predicted-price').innerText =
+            result.predicted_price.toFixed(2);
+          document.getElementById('prediction-result').style.display = 'block';
+        } else {
+          alert('Error: ' + result.error);
+          document.getElementById('prediction-result').style.display = 'none';
+        }
+      } catch (error) {
+        alert('Fetch error: ' + error.message);
+        document.getElementById('prediction-result').style.display = 'none';
+      }
+    });
+</script>
+{% endblock %}
