@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  # Change in production
+app.secret_key = "supersecretkey"  
 DB_NAME = "users.db"
 
 # ------------------- Database Setup -------------------
@@ -140,7 +140,6 @@ def predict():
         print(data)
         X = preprocess_input(data)
         
-        # Debug print statements to check dtypes and sample values
         print(X.dtypes)
         print(X.head())
 
